@@ -22,10 +22,9 @@ class QuotesSpider(scrapy.Spider):
             yield {
                 'text': quote.xpath('./span[@itemprop="text"]/text()').get(),
                 'author': quote.xpath('./span/small[@class="author"]/text()').get(),
-                'tags' : quote.xpath('./div[@class="tags"]/a[@class="tag"]/text()').getall()
+                'tags' : quote.xpath('/div[@class="tags"]/a[@class="tag"]/text()').getall()
             }
 
         next_page = response.xpath('//ul[@class="pager"]/li[@class="next"]/a/@href').get()
         if next_page is not None:
-            next_page = response.urljoin(next_page)
-            yield scrapy.Request(next_page, callback=self.parse)
+            yield response.follow(next_page, callback=self.parse)
