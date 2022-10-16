@@ -3,7 +3,8 @@ import scrapy
 """
 text = '//div[@class="quote"]/span[@itemprop="text"]/text()'
 author = '//div[@class="quote"]/span/small[@class="author"]/text()'
-tags = 
+tags = '//div[@class="tags"]/a[@class="tag"]/text()'
+boton = '//ul[@class="pager"]/li[@class="next"]/a/@href'
 """
 
 
@@ -20,10 +21,11 @@ class QuotesSpider(scrapy.Spider):
         for quote in response.xpath('//div[@class="quote"]'):
             yield {
                 'text': quote.xpath('./span[@itemprop="text"]/text()').get(),
-                'author': quote.xpath('./span/small[@class="author"]/text()').get()
+                'author': quote.xpath('./span/small[@class="author"]/text()').get(),
+                'tags' : quote.xpath('./div[@class="tags"]/a[@class="tag"]/text()').getall()
             }
 
-        next_page = response.css('li.next a::attr(href)').get()
+        next_page = response.xpath('//ul[@class="pager"]/li[@class="next"]/a/@href').get()
         if next_page is not None:
             next_page = response.urljoin(next_page)
             yield scrapy.Request(next_page, callback=self.parse)
