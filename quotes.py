@@ -1,8 +1,8 @@
 import scrapy
 
 """
-text = /html/body/div/div[2]/div[1]/div[1]/span[1]/text()
-author = /html/body/div/div[2]/div[1]/div[1]/span[2]/small/text()
+text = '//div[@class="quote"]/span[@itemprop="text"]/text()'
+author = '//div[@class="quote"]/span/small[@class="author"]/text()'
 tags = 
 """
 
@@ -19,8 +19,8 @@ class QuotesSpider(scrapy.Spider):
     def parse(self, response):
         for quote in response.xpath('//div[@class="quote"]'):
             yield {
-                'text': quote.xpath('/html/body/div/div[2]/div[1]/div[1]/span[1]/text()').get(),
-                'author': quote.xpath('/html/body/div/div[2]/div[1]/div[1]/span[2]/small/text()').get()
+                'text': quote.xpath('./span[@itemprop="text"]/text()').get(),
+                'author': quote.xpath('./span/small[@class="author"]/text()').get()
             }
 
         next_page = response.css('li.next a::attr(href)').get()
